@@ -1,4 +1,4 @@
-package pcm_transcoder
+package lame
 
 /*
 #cgo LDFLAGS: -L${SRCDIR} -lmp3lame -lm
