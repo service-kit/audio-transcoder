@@ -69,7 +69,11 @@ import (
 	"unsafe"
 )
 
-func PcmToMp3(in []byte) (out []byte, err error) {
+type PcmMp3Transcoder struct {
+
+}
+
+func (t *PcmMp3Transcoder) Transcode(in []byte) (out []byte,err error) {
 	defer func() {
 		if e := recover(); e != nil {
 			fmt.Println("pcm to mp3 err:", e)
