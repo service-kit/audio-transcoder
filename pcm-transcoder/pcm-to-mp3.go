@@ -1,7 +1,7 @@
 package pcm_transcoder
 
 /*
-#cgo LDFLAGS: -L${SRCDIR} -lmp3lame
+#cgo LDFLAGS: -L${SRCDIR} -lmp3lame -lm
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -70,16 +70,15 @@ import (
 )
 
 type PcmMp3Transcoder struct {
-
 }
 
-func (t *PcmMp3Transcoder) Transcode(in []byte) (out []byte,err error) {
+func (t *PcmMp3Transcoder) Transcode(in []byte) (out []byte, err error) {
 	defer func() {
 		if e := recover(); e != nil {
 			fmt.Println("pcm to mp3 err:", e)
 		}
 	}()
-	if nil == in || 0 == len(in){
+	if nil == in || 0 == len(in) {
 		return nil, errors.New("input data is nil")
 	}
 	inlen := len(in)
