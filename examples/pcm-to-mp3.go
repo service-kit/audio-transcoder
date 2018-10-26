@@ -6,7 +6,6 @@ import (
 	"github.com/service-kit/audio-transcoder/pcm-transcoder"
 	"io"
 	"os"
-	"time"
 )
 
 func PcmToMp3() error {
@@ -50,8 +49,5 @@ func main() {
 		fmt.Println("pcm to mp3 err:", e.Error())
 	} else {
 		fmt.Println("pcm to mp3 success")
-	}
-	for {
-		time.Sleep(time.Second)
 	}
 }
