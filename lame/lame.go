@@ -59,7 +59,7 @@ func BytesToCShortPoint(bytes []byte) *C.short {
 }
 
 type Lame struct {
-	lamePointer *C.lame_global_flags
+	lgfp *C.lame_global_flags
 }
 
 func (l *Lame) Init(rate int, channels LameChannelsType, kbps int) {
@@ -72,27 +72,27 @@ func (l *Lame) Init(rate int, channels LameChannelsType, kbps int) {
 }
 
 func (l *Lame) lameInit() {
-	l.lamePointer = C.lame_init()
+	l.lgfp = C.lame_init()
 }
 
 func (l *Lame) setInSamplerate(rate int) {
-	C.lame_set_in_samplerate(l.lamePointer, C.int(rate))
+	C.lame_set_in_samplerate(l.lgfp, C.int(rate))
 }
 
 func (l *Lame) setNumChannels(channels LameChannelsType) {
-	C.lame_set_num_channels(l.lamePointer, C.int(channels))
+	C.lame_set_num_channels(l.lgfp, C.int(channels))
 }
 
 func (l *Lame) setVBRMeanBitrateKbps(kbps int) {
-	C.lame_set_VBR_mean_bitrate_kbps(l.lamePointer, C.int(kbps))
+	C.lame_set_VBR_mean_bitrate_kbps(l.lgfp, C.int(kbps))
 }
 
 func (l *Lame) setVBR(vbrMode VBRMode) {
-	C.lame_set_VBR(l.lamePointer, C.vbr_mode(vbrMode))
+	C.lame_set_VBR(l.lgfp, C.vbr_mode(vbrMode))
 }
 
 func (l *Lame) initParams() error {
-	retCode := C.lame_init_params(l.lamePointer)
+	retCode := C.lame_init_params(l.lgfp)
 	if 0 != retCode {
 		log.Printf("init params err %v\n", retCode)
 		return errors.New("init params err,ret code " + strconv.Itoa(int(retCode)))
@@ -101,17 +101,17 @@ func (l *Lame) initParams() error {
 }
 
 func (l *Lame) LameEncodeFlush(out []byte) int {
-	mp3Bytes := C.lame_encode_flush(l.lamePointer, BytesToCUcharPoint(out), C.int(len(out)))
+	mp3Bytes := C.lame_encode_flush(l.lgfp, BytesToCUcharPoint(out), C.int(len(out)))
 	return int(mp3Bytes)
 }
 
 func (l *Lame) LameEncodeBufferInterleaved(in, out []byte) int {
-	mp3Bytes := C.lame_encode_buffer_interleaved(l.lamePointer, BytesToCShortPoint(in), C.int(len(in)/4), BytesToCUcharPoint(out), C.int(len(out)))
+	mp3Bytes := C.lame_encode_buffer_interleaved(l.lgfp, BytesToCShortPoint(in), C.int(len(in)/4), BytesToCUcharPoint(out), C.int(len(out)))
 	return int(mp3Bytes)
 }
 
 func (l *Lame) LameClose() error {
-	retCode := C.lame_close(l.lamePointer)
+	retCode := C.lame_close(l.lgfp)
 	if 0 != retCode {
 		log.Printf("init params err %v\n", retCode)
 		return errors.New("lame close err,ret code " + strconv.Itoa(int(retCode)))
