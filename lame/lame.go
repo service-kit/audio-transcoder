@@ -30,13 +30,13 @@ const (
 	LAME_VBR_DEFAULT = LAME_VBR_MTRH
 )
 
-type VBRModel int
+type VBRMode int
 
-func BytesToCCharPoint(bytes []byte) *C.char {
+func BytesToCUcharPoint(bytes []byte) *C.uchar {
 	if nil == bytes || 0 == len(bytes) {
 		return nil
 	}
-	return (*C.char)(unsafe.Pointer(&bytes[0]))
+	return (*C.uchar)(unsafe.Pointer(&bytes[0]))
 }
 
 func BytesToCShortPoint(bytes []byte) *C.short {
@@ -70,8 +70,8 @@ func (l *Lame) SetVBRMeanBitrateKbps(kbps int) {
 	C.lame_set_VBR_mean_bitrate_kbps(l.lamePointer, C.int(kbps))
 }
 
-func (l *Lame) SetVBR(vbrMode VBRModel) {
-	C.lame_set_VBR(l.lamePointer, C.int(vbrMode))
+func (l *Lame) SetVBR(vbrMode VBRMode) {
+	C.lame_set_VBR(l.lamePointer, C.vbr_mode(vbrMode))
 }
 
 func (l *Lame) InitParams() error {
@@ -84,12 +84,12 @@ func (l *Lame) InitParams() error {
 }
 
 func (l *Lame) LameEncodeFlush() []byte {
-	mp3Bytes := C.lame_encode_flush(l.lamePointer, BytesToCCharPoint(l.mp3Buf), C.int(MP3_BUF_SIZE))
+	mp3Bytes := C.lame_encode_flush(l.lamePointer, BytesToCUcharPoint(l.mp3Buf), C.int(MP3_BUF_SIZE))
 	return l.mp3Buf[:int(mp3Bytes)]
 }
 
 func (l *Lame) LameEncodeBufferInterleaved(in []byte) []byte {
-	mp3Bytes := C.lame_encode_buffer_interleaved(l.lamePointer, BytesToCShortPoint(in), C.int(len(in)/4), BytesToCCharPoint(l.mp3Buf), C.int(MP3_BUF_SIZE))
+	mp3Bytes := C.lame_encode_buffer_interleaved(l.lamePointer, BytesToCShortPoint(in), C.int(len(in)/4), BytesToCUcharPoint(l.mp3Buf), C.int(MP3_BUF_SIZE))
 	return l.mp3Buf[:int(mp3Bytes)]
 }
 
