@@ -6,8 +6,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/service-kit/audio-transcoder/transcoder"
 	"github.com/kataras/iris/core/errors"
+	"github.com/service-kit/audio-transcoder/transcoder"
 )
 
 func PcmToMp3() error {
