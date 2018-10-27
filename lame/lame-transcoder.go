@@ -1,6 +1,9 @@
 package lame
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 type PcmToMp3Transcoder struct {
 	lame *Lame
@@ -21,7 +24,9 @@ func (t *PcmToMp3Transcoder) Transcode(in []byte) (out []byte, err error) {
 	inIndex := 0
 	bufIndex := 0
 	inLen := len(in)
+	fmt.Println("inLen:",inLen)
 	mp3Buf := make([]byte, inLen+MP3_BUF_SIZE)
+	fmt.Println("mp3BufLen:",len(mp3Buf))
 	readSize := 0
 	for {
 		if inLen-inIndex > 4*PCM_BUF_SIZE {
@@ -29,6 +34,7 @@ func (t *PcmToMp3Transcoder) Transcode(in []byte) (out []byte, err error) {
 		} else {
 			readSize = inLen - inIndex
 		}
+		fmt.Printf("readSize:%v inIndex:%v bufIndex:%v\n",readSize,inIndex,bufIndex)
 		if 0 == readSize {
 			bufIndex += t.lame.LameEncodeFlush(mp3Buf[bufIndex:])
 			break
