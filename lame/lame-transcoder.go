@@ -28,6 +28,7 @@ func (t *PcmToMp3Transcoder) Transcode(in []byte) (out []byte, err error) {
 	mp3Buf := make([]byte, inLen+MP3_BUF_SIZE)
 	fmt.Println("mp3BufLen:",len(mp3Buf))
 	readSize := 0
+	fmt.Printf("readSize:%v inIndex:%v bufIndex:%v\n",readSize,inIndex,bufIndex)
 	for {
 		if inLen-inIndex > 4*PCM_BUF_SIZE {
 			readSize = 4 * PCM_BUF_SIZE
