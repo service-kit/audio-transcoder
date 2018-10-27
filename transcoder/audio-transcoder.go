@@ -1,12 +1,17 @@
 package transcoder
 
+import "github.com/service-kit/audio-transcoder/lame"
+
+type ChannelsType int
+
 const (
-	PCM_BUF_SIZE = 8192
-	MP3_BUF_SIZE = 8192
+	CHANNELS_NOT_SET      = lame.LAME_CHANNELS_NOT_SET
+	CHANNELS_MONO         = lame.LAME_CHANNEL_MONO
+	CHANNELS_JOINT_STEREO = lame.LAME_CHANNELS_JOINT_STEREO
 )
 
-func NewPcmToMp3Transcoder() Transcoder {
+func NewPcmToMp3Transcoder(rate int, channels ChannelsType, kbps int) Transcoder {
 	t := new(PcmToMp3Transcoder)
-	t.Init(8000, 1, 16)
+	t.Init(rate, channels, kbps)
 	return t
 }

@@ -14,6 +14,8 @@ import (
 	"unsafe"
 )
 
+type LameChannelsType int
+
 const (
 	LAME_CHANNEL_MONO = 3
 
@@ -24,6 +26,10 @@ const (
 	LAME_VBR_MTRH          = VBRMode(4)
 	LAME_VBR_MAX_INDICATOR = VBRMode(5)
 	LAME_VBR_DEFAULT       = LAME_VBR_MTRH
+
+	LAME_CHANNELS_NOT_SET      = LameChannelsType(4)
+	LAME_CHANNELS_MONO         = LameChannelsType(3)
+	LAME_CHANNELS_JOINT_STEREO = LameChannelsType(1)
 )
 
 type VBRMode int
@@ -46,7 +52,7 @@ type Lame struct {
 	lamePointer *C.lame_global_flags
 }
 
-func (l *Lame) Init(rate, channels, kbps int) {
+func (l *Lame) Init(rate int, channels LameChannelsType, kbps int) {
 	l.lameInit()
 	l.setInSamplerate(rate)
 	l.setVBRMeanBitrateKbps(kbps)
@@ -63,7 +69,7 @@ func (l *Lame) setInSamplerate(rate int) {
 	C.lame_set_in_samplerate(l.lamePointer, C.int(rate))
 }
 
-func (l *Lame) setNumChannels(channels int) {
+func (l *Lame) setNumChannels(channels LameChannelsType) {
 	C.lame_set_num_channels(l.lamePointer, C.int(channels))
 }
 
@@ -94,7 +100,7 @@ func (l *Lame) LameEncodeBufferInterleaved(in, out []byte) int {
 	return int(mp3Bytes)
 }
 
-func NewLame(rate, channels, kbps int) *Lame {
+func NewLame(rate int, channels LameChannelsType, kbps int) *Lame {
 	lame := new(Lame)
 	lame.Init(rate, channels, kbps)
 	return lame

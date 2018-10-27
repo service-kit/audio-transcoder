@@ -21,7 +21,7 @@ func TestNewPcmMp3Transcoder(t *testing.T) {
 		return
 	}
 	t.Log("file size:", ii)
-	transcoder := NewPcmToMp3Transcoder()
+	transcoder := NewPcmToMp3Transcoder(8000, CHANNELS_MONO, 16)
 	afterTranscodingData, e := transcoder.Transcode(buf.Bytes())
 	if nil != e {
 		t.Error("transcode err:", e.Error())
