@@ -31,22 +31,19 @@ const (
 )
 
 type VBRModel int
-type CChar C.char
-type CShort C.short
-type CInt C.int
 
-func BytesToCCharPoint(bytes []byte) *CChar {
+func BytesToCCharPoint(bytes []byte) *C.char {
 	if nil == bytes || 0 == len(bytes) {
 		return nil
 	}
-	return (*CChar)(unsafe.Pointer(&bytes[0]))
+	return (*C.char)(unsafe.Pointer(&bytes[0]))
 }
 
-func BytesToCShortPoint(bytes []byte) *CShort {
+func BytesToCShortPoint(bytes []byte) *C.short {
 	if nil == bytes || 0 == len(bytes) {
 		return nil
 	}
-	return (*CShort)(unsafe.Pointer(&bytes[0]))
+	return (*C.short)(unsafe.Pointer(&bytes[0]))
 }
 
 type Lame struct {
@@ -62,19 +59,19 @@ func (l *Lame) Init() {
 }
 
 func (l *Lame) SetInSamplerate(rate int) {
-	C.lame_set_in_samplerate(l.lamePointer, CInt(rate))
+	C.lame_set_in_samplerate(l.lamePointer, C.int(rate))
 }
 
 func (l *Lame) SetNumChannels(channels int) {
-	C.lame_set_num_channels(l.lamePointer, CInt(channels))
+	C.lame_set_num_channels(l.lamePointer, C.int(channels))
 }
 
 func (l *Lame) SetVBRMeanBitrateKbps(kbps int) {
-	C.lame_set_VBR_mean_bitrate_kbps(l.lamePointer, CInt(kbps))
+	C.lame_set_VBR_mean_bitrate_kbps(l.lamePointer, C.int(kbps))
 }
 
 func (l *Lame) SetVBR(vbrMode VBRModel) {
-	C.lame_set_VBR(l.lamePointer, CInt(vbrMode))
+	C.lame_set_VBR(l.lamePointer, C.int(vbrMode))
 }
 
 func (l *Lame) InitParams() error {
@@ -87,12 +84,12 @@ func (l *Lame) InitParams() error {
 }
 
 func (l *Lame) LameEncodeFlush() []byte {
-	mp3Bytes := C.lame_encode_flush(l.lamePointer, BytesToCCharPoint(l.mp3Buf), CInt(MP3_BUF_SIZE))
+	mp3Bytes := C.lame_encode_flush(l.lamePointer, BytesToCCharPoint(l.mp3Buf), C.int(MP3_BUF_SIZE))
 	return l.mp3Buf[:int(mp3Bytes)]
 }
 
 func (l *Lame) LameEncodeBufferInterleaved(in []byte) []byte {
-	mp3Bytes := C.lame_encode_buffer_interleaved(l.lamePointer, BytesToCShortPoint(in), CInt(len(in)/4), BytesToCCharPoint(l.mp3Buf), MP3_BUF_SIZE)
+	mp3Bytes := C.lame_encode_buffer_interleaved(l.lamePointer, BytesToCShortPoint(in), C.int(len(in)/4), BytesToCCharPoint(l.mp3Buf), C.int(MP3_BUF_SIZE))
 	return l.mp3Buf[:int(mp3Bytes)]
 }
 
