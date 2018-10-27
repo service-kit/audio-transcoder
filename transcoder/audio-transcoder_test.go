@@ -1,4 +1,4 @@
-package audio_transcoder
+package transcoder
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewPcmMp3Transcoder(t *testing.T) {
-	f, e := os.OpenFile("test.pcm", os.O_RDONLY, 0777)
+	f, e := os.OpenFile("../test.pcm", os.O_RDONLY, 0777)
 	if nil != e {
 		t.Error("test.pcm open err:", e.Error())
 		return
@@ -21,13 +21,13 @@ func TestNewPcmMp3Transcoder(t *testing.T) {
 		return
 	}
 	t.Log("file size:", ii)
-	transcoder := NewPcmMp3Transcoder()
+	transcoder := NewPcmToMp3Transcoder()
 	afterTranscodingData, e := transcoder.Transcode(buf.Bytes())
 	if nil != e {
 		t.Error("transcode err:", e.Error())
 		return
 	}
-	of, e := os.OpenFile("test_out.mp3", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+	of, e := os.OpenFile("../test_out.mp3", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	if nil != e {
 		t.Error("open out file err:", e.Error())
 		return

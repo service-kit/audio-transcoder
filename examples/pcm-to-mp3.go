@@ -3,10 +3,9 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"github.com/service-kit/audio-transcoder/transcoder"
 	"io"
 	"os"
-
-	"github.com/service-kit/audio-transcoder/lame"
 )
 
 func PcmToMp3() error {
@@ -23,7 +22,7 @@ func PcmToMp3() error {
 		return e
 	}
 	fmt.Println("file size:", ii)
-	transcoder := new(lame.PcmMp3Transcoder)
+	transcoder := transcoder.NewPcmToMp3Transcoder()
 	afterTranscodingData, e := transcoder.Transcode(buf.Bytes())
 	if nil != e {
 		fmt.Println("transcode err:", e.Error())

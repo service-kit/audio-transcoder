@@ -9,7 +9,6 @@ package lame
 */
 import "C"
 import (
-	"bytes"
 	"errors"
 	"log"
 	"unsafe"
@@ -21,13 +20,13 @@ const (
 
 	LAME_CHANNEL_MONO = 3
 
-	LAME_VBR_OFF = iota
-	LAME_VBR_MT
-	LAME_VBR_RH
-	LAME_VBR_ABR
-	LAME_VBR_MTRH
-	LAME_VBR_MAX_INDICATOR
-	LAME_VBR_DEFAULT = LAME_VBR_MTRH
+	LAME_VBR_OFF           = VBRMode(0)
+	LAME_VBR_MT            = VBRMode(1)
+	LAME_VBR_RH            = VBRMode(2)
+	LAME_VBR_ABR           = VBRMode(3)
+	LAME_VBR_MTRH          = VBRMode(4)
+	LAME_VBR_MAX_INDICATOR = VBRMode(5)
+	LAME_VBR_DEFAULT       = LAME_VBR_MTRH
 )
 
 type VBRMode int
@@ -48,33 +47,37 @@ func BytesToCShortPoint(bytes []byte) *C.short {
 
 type Lame struct {
 	lamePointer *C.lame_global_flags
-	inBuf       *bytes.Buffer
-	mp3Buf      []byte
 }
 
-func (l *Lame) Init() {
+func (l *Lame) Init(rate, channels, kbps int) {
+	l.lameInit()
+	l.setInSamplerate(rate)
+	l.setVBRMeanBitrateKbps(kbps)
+	l.setVBR(LAME_VBR_DEFAULT)
+	l.setNumChannels(channels)
+}
+
+func (l *Lame) lameInit() {
 	l.lamePointer = C.lame_init()
-	l.inBuf = new(bytes.Buffer)
-	l.mp3Buf = make([]byte, MP3_BUF_SIZE)
 }
 
-func (l *Lame) SetInSamplerate(rate int) {
+func (l *Lame) setInSamplerate(rate int) {
 	C.lame_set_in_samplerate(l.lamePointer, C.int(rate))
 }
 
-func (l *Lame) SetNumChannels(channels int) {
+func (l *Lame) setNumChannels(channels int) {
 	C.lame_set_num_channels(l.lamePointer, C.int(channels))
 }
 
-func (l *Lame) SetVBRMeanBitrateKbps(kbps int) {
+func (l *Lame) setVBRMeanBitrateKbps(kbps int) {
 	C.lame_set_VBR_mean_bitrate_kbps(l.lamePointer, C.int(kbps))
 }
 
-func (l *Lame) SetVBR(vbrMode VBRMode) {
+func (l *Lame) setVBR(vbrMode VBRMode) {
 	C.lame_set_VBR(l.lamePointer, C.vbr_mode(vbrMode))
 }
 
-func (l *Lame) InitParams() error {
+func (l *Lame) initParams() error {
 	retCode := C.lame_init_params(l.lamePointer)
 	if retCode < 0 {
 		log.Printf("init params err %v", retCode)
@@ -83,18 +86,18 @@ func (l *Lame) InitParams() error {
 	return nil
 }
 
-func (l *Lame) LameEncodeFlush() []byte {
-	mp3Bytes := C.lame_encode_flush(l.lamePointer, BytesToCUcharPoint(l.mp3Buf), C.int(MP3_BUF_SIZE))
-	return l.mp3Buf[:int(mp3Bytes)]
+func (l *Lame) LameEncodeFlush(out []byte) int {
+	mp3Bytes := C.lame_encode_flush(l.lamePointer, BytesToCUcharPoint(out), C.int(len(out)))
+	return int(mp3Bytes)
 }
 
-func (l *Lame) LameEncodeBufferInterleaved(in []byte) []byte {
-	mp3Bytes := C.lame_encode_buffer_interleaved(l.lamePointer, BytesToCShortPoint(in), C.int(len(in)/4), BytesToCUcharPoint(l.mp3Buf), C.int(MP3_BUF_SIZE))
-	return l.mp3Buf[:int(mp3Bytes)]
+func (l *Lame) LameEncodeBufferInterleaved(in, out []byte) int {
+	mp3Bytes := C.lame_encode_buffer_interleaved(l.lamePointer, BytesToCShortPoint(in), C.int(len(in)/4), BytesToCUcharPoint(out), C.int(len(out)))
+	return int(mp3Bytes)
 }
 
-func NewLame() *Lame {
+func NewLame(rate, channels, kbps int) *Lame {
 	lame := new(Lame)
-	lame.Init()
+	lame.Init(rate, channels, kbps)
 	return lame
 }
