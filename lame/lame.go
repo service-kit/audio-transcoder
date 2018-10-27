@@ -40,14 +40,14 @@ func BytesToCCharPoint(bytes []byte) *CChar {
 	if nil == bytes || 0 == len(bytes) {
 		return nil
 	}
-	return *CChar(unsafe.Pointer(&bytes[0]))
+	return (*CChar)(unsafe.Pointer(&bytes[0]))
 }
 
 func BytesToCShortPoint(bytes []byte) *CShort {
 	if nil == bytes || 0 == len(bytes) {
 		return nil
 	}
-	return *CShort(unsafe.Pointer(&bytes[0]))
+	return (*CShort)(unsafe.Pointer(&bytes[0]))
 }
 
 type Lame struct {
