@@ -2,10 +2,10 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
-	"errors"
 
 	"github.com/service-kit/audio-transcoder/transcoder"
 )

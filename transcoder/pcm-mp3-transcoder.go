@@ -21,35 +21,38 @@ func (t *PcmToMp3Transcoder) Init(rate int, channels ChannelsType, kbps int) err
 }
 
 func (t *PcmToMp3Transcoder) Transcode(in []byte) (out []byte, err error) {
-	if nil == t.lame {
-		return nil, errors.New("transcoder not init")
-	}
-	if nil == in || 0 == len(in) {
-		return nil, errors.New("in data is nil or empty")
-	}
-	inIndex := 0
-	bufIndex := 0
-	inLen := len(in)
-	mp3Buf := make([]byte, inLen+MP3_BUF_SIZE)
-	readSize := 0
-	mp3Bytes := 0
-	for {
-		if inLen-inIndex > 2*PCM_BUF_SIZE {
-			readSize = 2 * PCM_BUF_SIZE
-		} else {
-			readSize = inLen - inIndex
+	/*
+		if nil == t.lame {
+			return nil, errors.New("transcoder not init")
 		}
-		if 0 == readSize {
-			mp3Bytes = t.lame.LameEncodeFlush(mp3Buf[bufIndex:])
-			bufIndex += mp3Bytes
-			break
-		} else {
-			mp3Bytes = t.lame.LameEncodeBufferInterleaved(in[inIndex:inIndex+readSize], mp3Buf[bufIndex:])
-			bufIndex += mp3Bytes
-			inIndex += readSize
+		if nil == in || 0 == len(in) {
+			return nil, errors.New("in data is nil or empty")
 		}
-	}
-	return mp3Buf[:bufIndex], nil
+		inIndex := 0
+		bufIndex := 0
+		inLen := len(in)
+		mp3Buf := make([]byte, inLen+MP3_BUF_SIZE)
+		readSize := 0
+		mp3Bytes := 0
+		for {
+			if inLen-inIndex > 2*PCM_BUF_SIZE {
+				readSize = 2 * PCM_BUF_SIZE
+			} else {
+				readSize = inLen - inIndex
+			}
+			if 0 == readSize {
+				mp3Bytes = t.lame.LameEncodeFlush(mp3Buf[bufIndex:])
+				bufIndex += mp3Bytes
+				break
+			} else {
+				mp3Bytes = t.lame.LameEncodeBufferInterleaved(in[inIndex:inIndex+readSize], mp3Buf[bufIndex:])
+				bufIndex += mp3Bytes
+				inIndex += readSize
+			}
+		}
+		return mp3Buf[:bufIndex], nil
+	*/
+	return lame.PcmToMp3(in)
 }
 
 func (t *PcmToMp3Transcoder) Close() error {
