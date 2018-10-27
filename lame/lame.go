@@ -112,7 +112,7 @@ func (l *Lame) LameEncodeBufferInterleaved(in, out []byte) int {
 
 func (l *Lame) LameClose() error {
 	retCode := C.lame_close(l.lamePointer)
-	if 0 != ret {
+	if 0 != retCode {
 		log.Printf("init params err %v\n", retCode)
 		return errors.New("lame close err,ret code " + strconv.Itoa(int(retCode)))
 	}
