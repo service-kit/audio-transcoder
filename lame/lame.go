@@ -52,6 +52,7 @@ func (l *Lame) Init(rate, channels, kbps int) {
 	l.setVBRMeanBitrateKbps(kbps)
 	l.setVBR(LAME_VBR_DEFAULT)
 	l.setNumChannels(channels)
+	l.initParams()
 }
 
 func (l *Lame) lameInit() {

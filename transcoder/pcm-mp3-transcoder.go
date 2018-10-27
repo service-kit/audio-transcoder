@@ -33,7 +33,7 @@ func (t *PcmToMp3Transcoder) Transcode(in []byte) (out []byte, err error) {
 	fmt.Printf("readSize:%v inIndex:%v bufIndex:%v\n", readSize, inIndex, bufIndex)
 	for {
 		if inLen-inIndex > 2*PCM_BUF_SIZE {
-			readSize = 2 * PCM_BUF_SIZE
+			readSize = 2*PCM_BUF_SIZE
 		} else {
 			readSize = inLen - inIndex
 		}
