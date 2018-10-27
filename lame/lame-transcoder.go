@@ -24,23 +24,28 @@ func (t *PcmToMp3Transcoder) Transcode(in []byte) (out []byte, err error) {
 	inIndex := 0
 	bufIndex := 0
 	inLen := len(in)
-	fmt.Println("inLen:",inLen)
+	fmt.Println("inLen:", inLen)
 	mp3Buf := make([]byte, inLen+MP3_BUF_SIZE)
-	fmt.Println("mp3BufLen:",len(mp3Buf))
+	fmt.Println("mp3BufLen:", len(mp3Buf))
 	readSize := 0
-	fmt.Printf("readSize:%v inIndex:%v bufIndex:%v\n",readSize,inIndex,bufIndex)
+	mp3Bytes := 0
+	fmt.Printf("readSize:%v inIndex:%v bufIndex:%v\n", readSize, inIndex, bufIndex)
 	for {
 		if inLen-inIndex > 4*PCM_BUF_SIZE {
 			readSize = 4 * PCM_BUF_SIZE
 		} else {
 			readSize = inLen - inIndex
 		}
-		fmt.Printf("readSize:%v inIndex:%v bufIndex:%v\n",readSize,inIndex,bufIndex)
+		fmt.Printf("readSize:%v inIndex:%v bufIndex:%v\n", readSize, inIndex, bufIndex)
 		if 0 == readSize {
-			bufIndex += t.lame.LameEncodeFlush(mp3Buf[bufIndex:])
+			mp3Bytes = t.lame.LameEncodeFlush(mp3Buf[bufIndex:])
+			fmt.Println("LameEncodeFlush mp3Bytes:", mp3Bytes)
+			bufIndex += mp3Bytes
 			break
 		} else {
-			bufIndex += t.lame.LameEncodeBufferInterleaved(in[inIndex:inIndex+readSize], mp3Buf[bufIndex:])
+			mp3Bytes = t.lame.LameEncodeBufferInterleaved(in[inIndex:inIndex+readSize], mp3Buf[bufIndex:])
+			fmt.Println("LameEncodeBufferInterleaved mp3Bytes:", mp3Bytes)
+			bufIndex += mp3Bytes
 			inIndex += readSize
 		}
 	}
