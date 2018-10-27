@@ -15,9 +15,6 @@ import (
 )
 
 const (
-	PCM_BUF_SIZE = 8192
-	MP3_BUF_SIZE = 8192
-
 	LAME_CHANNEL_MONO = 3
 
 	LAME_VBR_OFF           = VBRMode(0)

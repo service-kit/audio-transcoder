@@ -1,16 +1,17 @@
-package lame
+package transcoder
 
 import (
 	"errors"
 	"fmt"
+	"github.com/service-kit/audio-transcoder/lame"
 )
 
 type PcmToMp3Transcoder struct {
-	lame *Lame
+	lame *lame.Lame
 }
 
 func (t *PcmToMp3Transcoder) Init(rate, channels, kbps int) error {
-	t.lame = NewLame(rate, channels, kbps)
+	t.lame = lame.NewLame(rate, channels, kbps)
 	return nil
 }
 
@@ -31,8 +32,8 @@ func (t *PcmToMp3Transcoder) Transcode(in []byte) (out []byte, err error) {
 	mp3Bytes := 0
 	fmt.Printf("readSize:%v inIndex:%v bufIndex:%v\n", readSize, inIndex, bufIndex)
 	for {
-		if inLen-inIndex > 4*PCM_BUF_SIZE {
-			readSize = 4 * PCM_BUF_SIZE
+		if inLen-inIndex > 2*PCM_BUF_SIZE {
+			readSize = 2 * PCM_BUF_SIZE
 		} else {
 			readSize = inLen - inIndex
 		}
