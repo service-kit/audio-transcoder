@@ -2,6 +2,7 @@ package transcoder
 
 import (
 	"errors"
+
 	"github.com/service-kit/audio-transcoder/lame"
 )
 
@@ -49,4 +50,11 @@ func (t *PcmToMp3Transcoder) Transcode(in []byte) (out []byte, err error) {
 		}
 	}
 	return mp3Buf[:bufIndex], nil
+}
+
+func (t *PcmToMp3Transcoder) Close() error {
+	if nil != t {
+		return t.Close()
+	}
+	return errors.New("transcoder not init")
 }

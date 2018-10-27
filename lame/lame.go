@@ -11,6 +11,7 @@ import "C"
 import (
 	"errors"
 	"log"
+	"strconv"
 	"unsafe"
 )
 
@@ -19,16 +20,25 @@ type LameChannelsType int
 const (
 	LAME_CHANNEL_MONO = 3
 
-	LAME_VBR_OFF           = VBRMode(0)
-	LAME_VBR_MT            = VBRMode(1)
-	LAME_VBR_RH            = VBRMode(2)
-	LAME_VBR_ABR           = VBRMode(3)
-	LAME_VBR_MTRH          = VBRMode(4)
+	// lame bitrate control mode
+	// CBR
+	LAME_VBR_OFF = VBRMode(0)
+	LAME_VBR_MT  = VBRMode(1)
+	LAME_VBR_RH  = VBRMode(2)
+	// ABR
+	LAME_VBR_ABR = VBRMode(3)
+	// VBR
+	LAME_VBR_MTRH = VBRMode(4)
+	// don't use
 	LAME_VBR_MAX_INDICATOR = VBRMode(5)
 	LAME_VBR_DEFAULT       = LAME_VBR_MTRH
 
-	LAME_CHANNELS_NOT_SET      = LameChannelsType(4)
-	LAME_CHANNELS_MONO         = LameChannelsType(3)
+	// lame channels type
+	// use input audio channels number
+	LAME_CHANNELS_NOT_SET = LameChannelsType(4)
+	// use mone
+	LAME_CHANNELS_MONO = LameChannelsType(3)
+	// use joint stereo
 	LAME_CHANNELS_JOINT_STEREO = LameChannelsType(1)
 )
 
@@ -83,9 +93,9 @@ func (l *Lame) setVBR(vbrMode VBRMode) {
 
 func (l *Lame) initParams() error {
 	retCode := C.lame_init_params(l.lamePointer)
-	if retCode < 0 {
-		log.Printf("init params err %v", retCode)
-		return errors.New("init params err")
+	if 0 != retCode {
+		log.Printf("init params err %v\n", retCode)
+		return errors.New("init params err,ret code " + strconv.Itoa(int(retCode)))
 	}
 	return nil
 }
@@ -98,6 +108,15 @@ func (l *Lame) LameEncodeFlush(out []byte) int {
 func (l *Lame) LameEncodeBufferInterleaved(in, out []byte) int {
 	mp3Bytes := C.lame_encode_buffer_interleaved(l.lamePointer, BytesToCShortPoint(in), C.int(len(in)/4), BytesToCUcharPoint(out), C.int(len(out)))
 	return int(mp3Bytes)
+}
+
+func (l *Lame) LameClose() error {
+	retCode := C.lame_close(l.lamePointer)
+	if 0 != ret {
+		log.Printf("init params err %v\n", retCode)
+		return errors.New("lame close err,ret code " + strconv.Itoa(int(retCode)))
+	}
+	return nil
 }
 
 func NewLame(rate int, channels LameChannelsType, kbps int) *Lame {

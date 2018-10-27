@@ -3,9 +3,11 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/service-kit/audio-transcoder/transcoder"
 	"io"
 	"os"
+
+	"github.com/service-kit/audio-transcoder/transcoder"
+	"github.com/kataras/iris/core/errors"
 )
 
 func PcmToMp3() error {
@@ -22,7 +24,12 @@ func PcmToMp3() error {
 		return e
 	}
 	fmt.Println("file size:", ii)
-	transcoder := transcoder.NewPcmToMp3Transcoder(8000, transcoder.CHANNELS_MONO, 16)
+	transcoder := transcoder.NewPcmToMp3Transcoder(8000, transcoder.CHANNELS_NOT_SET, 16)
+	if nil == transcoder {
+		fmt.Println("NewPcmToMp3Transcoder return nil")
+		return errors.New("NewPcmToMp3Transcoder return nil")
+	}
+	defer transcoder.Close()
 	afterTranscodingData, e := transcoder.Transcode(buf.Bytes())
 	if nil != e {
 		fmt.Println("transcode err:", e.Error())
