@@ -51,7 +51,7 @@ func BytesToCShortPoint(bytes []byte) *CShort {
 }
 
 type Lame struct {
-	lamePointer CLameGlobalFlags
+	lamePointer *CLameGlobalFlags
 	inBuf       *bytes.Buffer
 	mp3Buf      []byte
 }
