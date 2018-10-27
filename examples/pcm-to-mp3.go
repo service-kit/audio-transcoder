@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"errors"
 
-	"github.com/kataras/iris/core/errors"
 	"github.com/service-kit/audio-transcoder/transcoder"
 )
 
