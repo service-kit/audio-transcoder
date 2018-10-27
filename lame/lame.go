@@ -34,7 +34,6 @@ type VBRModel int
 type CChar C.char
 type CShort C.short
 type CInt C.int
-type CLameGlobalFlags C.lame_global_flags
 
 func BytesToCCharPoint(bytes []byte) *CChar {
 	if nil == bytes || 0 == len(bytes) {
@@ -51,7 +50,7 @@ func BytesToCShortPoint(bytes []byte) *CShort {
 }
 
 type Lame struct {
-	lamePointer *CLameGlobalFlags
+	lamePointer *C.lame_global_flags
 	inBuf       *bytes.Buffer
 	mp3Buf      []byte
 }
