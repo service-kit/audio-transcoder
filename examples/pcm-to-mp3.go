@@ -5,9 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	_ "net/http/pprof"
 	"os"
 
 	"github.com/service-kit/audio-transcoder/transcoder"
+	"net/http"
+	"time"
 )
 
 func PcmToMp3() error {
@@ -51,10 +54,16 @@ func PcmToMp3() error {
 }
 
 func main() {
-	e := PcmToMp3()
-	if nil != e {
-		fmt.Println("pcm to mp3 err:", e.Error())
-	} else {
-		fmt.Println("pcm to mp3 success")
-	}
+	go func() {
+		for {
+			e := PcmToMp3()
+			if nil != e {
+				fmt.Println("pcm to mp3 err:", e.Error())
+			} else {
+				fmt.Println("pcm to mp3 success")
+			}
+			time.Sleep(time.Second)
+		}
+	}()
+	http.ListenAndServe(":8080", nil)
 }
